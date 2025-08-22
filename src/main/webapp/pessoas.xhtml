@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gestão de Pessoas</title>
+</h:head>
+
+<h:body>
+    <p:growl id="messages" showDetail="true"/>
+
+    <h:form>
+        <p:panel header="Navegação">
+            <p:button value="Voltar à Página Principal" outcome="index" icon="pi pi-home" />
+            <p:commandButton value="Sair" action="#{loginBean.efetuarLogout}" icon="pi pi-sign-out" ajax="false" style="margin-left: 10px;"/>
+        </p:panel>
+    </h:form>
+
+    <br/>
+
+    <h:form id="formPessoas">
+        <p:panel header="Gestão de Pessoas">
+            <p:commandButton value="Nova Pessoa" icon="pi pi-plus" actionListener="#{pessoaBean.novaPessoa()}" oncomplete="PF('dialogPessoa').show()" update=":formDialog:dialogPessoaContent"/>
+            <p:dataTable id="tabelaPessoas" var="p" value="#{pessoaBean.pessoas}" style="margin-top: 20px;" rows="10" paginator="true">
+                <p:column headerText="ID"><h:outputText value="#{p.id}" /></p:column>
+                <p:column headerText="Nome"><h:outputText value="#{p.nome}" /></p:column>
+                <p:column headerText="Cargo"><h:outputText value="#{p.cargo.nome}" /></p:column>
+                <p:column headerText="Ações" style="width:100px; text-align: center;">
+                    <p:commandButton icon="pi pi-pencil" title="Editar" actionListener="#{pessoaBean.setPessoaSelecionada(p)}" oncomplete="PF('dialogPessoa').show()" update=":formDialog:dialogPessoaContent"/>
+                    <p:commandButton icon="pi pi-trash" title="Excluir" actionListener="#{pessoaBean.excluir(p)}" update="tabelaPessoas messages">
+                        <p:confirm header="Confirmação" message="Tem a certeza que deseja excluir esta pessoa?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </h:form>
+
+    <h:form id="formDialog">
+        <p:dialog header="Dados da Pessoa" widgetVar="dialogPessoa" modal="true" resizable="false">
+            <p:panelGrid id="dialogPessoaContent" columns="2" style="width:100%;">
+                <p:outputLabel for="nome" value="Nome:"/>
+                <p:inputText id="nome" value="#{pessoaBean.pessoaSelecionada.nome}" required="true"/>
+                <p:outputLabel for="cargo" value="Cargo:"/>
+                <p:selectOneMenu id="cargo" value="#{pessoaBean.pessoaSelecionada.cargo}" converter="omnifaces.SelectItemsConverter" required="true">
+                    <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
+                    <f:selectItems value="#{pessoaBean.cargosDisponiveis}" var="cargo" itemLabel="#{cargo.nome}" itemValue="#{cargo}"/>
+                </p:selectOneMenu>
+            </p:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{pessoaBean.salvar}" update=":formPessoas:tabelaPessoas :formDialog:dialogPessoaContent messages" oncomplete="if (!args.validationFailed) { PF('dialogPessoa').hide(); }"/>
+                <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('dialogPessoa').hide()" type="button"/>
+            </f:facet>
+        </p:dialog>
+    </h:form>
+
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"><p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" /><p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" /></p:confirmDialog>
+</h:body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gestão de Usuários</title>
+</h:head>
+
+<h:body>
+    <p:growl id="messages" showDetail="true"/>
+
+    <h:form>
+        <p:panel header="Navegação">
+            <p:button value="Voltar à Página Principal" outcome="index" icon="pi pi-home" />
+            <p:commandButton value="Sair" action="#{loginBean.efetuarLogout}" icon="pi pi-sign-out" ajax="false" style="margin-left: 10px;"/>
+        </p:panel>
+    </h:form>
+
+    <br/>
+
+    <h:form id="formUsuarios">
+        <p:panel header="Gestão de Utilizadores">
+            <p:commandButton value="Novo Utilizador" icon="pi pi-plus" actionListener="#{usuarioBean.novoUsuario()}" oncomplete="PF('dialogUsuario').show()" update=":formDialog:dialogUsuarioContent"/>
+            <p:dataTable id="tabelaUsuarios" var="u" value="#{usuarioBean.usuarios}" style="margin-top: 20px;" rows="10" paginator="true">
+                <p:column headerText="ID" sortBy="#{u.id}"><h:outputText value="#{u.id}" /></p:column>
+                <p:column headerText="Nome" sortBy="#{u.nome}"><h:outputText value="#{u.nome}" /></p:column>
+                <p:column headerText="Login" sortBy="#{u.login}"><h:outputText value="#{u.login}" /></p:column>
+                <p:column headerText="Admin?" sortBy="#{u.admin}"><p:selectBooleanCheckbox value="#{u.admin}" disabled="true"/></p:column>
+                <p:column headerText="Ações">
+                    <p:commandButton icon="pi pi-pencil" title="Editar" actionListener="#{usuarioBean.setUsuarioSelecionado(u)}" oncomplete="PF('dialogUsuario').show()" update=":formDialog:dialogUsuarioContent"/>
+                    <p:commandButton icon="pi pi-trash" title="Excluir" actionListener="#{usuarioBean.excluir(u)}" update="tabelaUsuarios messages">
+                        <p:confirm header="Confirmação" message="Deseja mesmo excluir este utilizador?" icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </h:form>
+
+    <h:form id="formDialog">
+        <p:dialog header="Dados do Utilizador" widgetVar="dialogUsuario" modal="true" resizable="false">
+            <p:panelGrid id="dialogUsuarioContent" columns="2" style="width:100%;">
+                <p:outputLabel for="nome" value="Nome:"/>
+                <p:inputText id="nome" value="#{usuarioBean.usuarioSelecionado.nome}" required="true"/>
+                <p:outputLabel for="login" value="Login:"/>
+                <p:inputText id="login" value="#{usuarioBean.usuarioSelecionado.login}" required="true"/>
+                <p:outputLabel for="senha" value="Nova Senha:"/>
+                <p:password id="senha" value="#{usuarioBean.usuarioSelecionado.senha}" feedback="true" goodLabel="Boa" strongLabel="Forte" weakLabel="Fraca"/>
+                <p:outputLabel for="confirmaSenha" value="Confirmar Senha:"/>
+                <p:password id="confirmaSenha" value="#{usuarioBean.senhaParaConfirmacao}" />
+                <p:outputLabel for="isAdmin" value="É Administrador?"/>
+                <p:selectBooleanCheckbox id="isAdmin" value="#{usuarioBean.usuarioSelecionado.admin}"/>
+            </p:panelGrid>
+            <f:facet name="footer">
+                <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{usuarioBean.salvar}" update=":formUsuarios:tabelaUsuarios :formDialog:dialogUsuarioContent messages" oncomplete="if (!args.validationFailed) { PF('dialogUsuario').hide(); }"/>
+            </f:facet>
+        </p:dialog>
+    </h:form>
+
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"><p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" /><p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" /></p:confirmDialog>
+</h:body>
+</html>

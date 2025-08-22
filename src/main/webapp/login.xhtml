@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Login do Sistema</title>
+    <style>
+        html, body {
+            height: 100%; margin: 0; padding: 0; display: flex;
+            align-items: center; justify-content: center; background-color: #f0f2f5;
+        }
+        .login-panel { width: 350px; }
+        .login-panel .ui-panel-title { text-align: center; }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="login-panel">
+        <p:growl id="messages" showDetail="true" />
+
+        <h:form>
+            <p:panel header="Acesso ao Sistema">
+                <p:panelGrid columns="1" styleClass="ui-noborder" style="width:100%;">
+
+                    <p:outputLabel for="login" value="Utilizador"/>
+                    <p:inputText id="login" value="#{loginBean.login}" required="true" requiredMessage="O campo Utilizador é obrigatório." style="width:100%;"/>
+
+                    <p:outputLabel for="senha" value="Senha"/>
+                    <p:password id="senha" value="#{loginBean.senha}" required="true" requiredMessage="O campo Senha é obrigatório." style="width:100%;"/>
+
+                    <p:commandButton value="Entrar" action="#{loginBean.efetuarLogin}"
+                                     update="@form messages" ajax="false" style="width:100%; margin-top: 10px;"/>
+
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+</html>
