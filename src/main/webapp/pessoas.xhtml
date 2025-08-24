@@ -9,7 +9,17 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
         .ui-panel .ui-panel-titlebar { font-size: 1.2em !important; }
-        .ui-panelgrid .ui-panelgrid-cell { padding: 4px 10px; }
+        .expanded-details-grid {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+        .ui-datatable .ui-datatable-data > tr > td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
     </style>
 </h:head>
 
@@ -27,70 +37,121 @@
 
     <h:form id="formPessoas">
         <p:panel header="Gestão de Pessoas">
+
             <p:commandButton value="Nova Pessoa" icon="pi pi-plus"
                              actionListener="#{pessoaBean.novaPessoa()}"
                              oncomplete="PF('dialogPessoa').show()"
                              update=":formDialog"/>
 
             <p:dataTable id="tabelaPessoas" var="p" value="#{pessoaBean.pessoas}"
+                         rowKey="#{p.id}"
                          widgetVar="tabelaPessoasWV"
-                         style="margin-top: 20px;" rows="10" paginator="true"
-                         emptyMessage="Nenhum registro encontrado.">
+                         style="margin-top: 20px;" rows="15" paginator="true"
+                         paginatorPosition="bottom"
+                         emptyMessage="Nenhum registo encontrado.">
 
-                <p:column headerText="ID" sortBy="#{p.id}" style="width: 60px;"><h:outputText value="#{p.id}" /></p:column>
-                <p:column headerText="Nome" sortBy="#{p.nome}" filterBy="#{p.nome}" filterMatchMode="contains"><h:outputText value="#{p.nome}" /></p:column>
-                <p:column headerText="Email" sortBy="#{p.email}" filterBy="#{p.email}" filterMatchMode="contains"><h:outputText value="#{p.email}" /></p:column>
-                <p:column headerText="Cargo" sortBy="#{p.cargo.nome}" filterBy="#{p.cargo.nome}" filterMatchMode="contains"><h:outputText value="#{p.cargo != null ? p.cargo.nome : 'Sem Cargo'}" /></p:column>
-                <p:column headerText="Ações" style="width:120px; text-align: center;">
+                <p:column style="width:2rem">
+                    <p:rowToggler />
+                </p:column>
+
+                <p:column headerText="ID" sortBy="#{p.id}" style="width:60px; text-align: center;">
+                    <h:outputText value="#{p.id}" />
+                </p:column>
+
+                <p:column headerText="Nome" sortBy="#{p.nome}" filterBy="#{p.nome}" filterMatchMode="contains">
+                    <h:outputText value="#{p.nome}" />
+                </p:column>
+
+                <p:column headerText="E-mail" sortBy="#{p.email}" filterBy="#{p.email}" filterMatchMode="contains">
+                    <h:outputText value="#{p.email}" />
+                </p:column>
+
+                <p:column headerText="Telefone" sortBy="#{p.telefone}" style="width: 150px;">
+                    <h:outputText value="#{p.telefone}" />
+                </p:column>
+
+                <p:column headerText="Cargo" sortBy="#{p.cargo.nome}" filterBy="#{p.cargo.nome}" filterMatchMode="contains" style="width: 180px;">
+                    <h:outputText value="#{p.cargo != null ? p.cargo.nome : 'Sem Cargo'}" />
+                </p:column>
+
+                <p:column headerText="Ações" style="width:120px; text-align: center;" exportable="false">
                     <p:commandButton icon="pi pi-pencil" title="Editar"
                                      actionListener="#{pessoaBean.setPessoaSelecionada(p)}"
                                      oncomplete="PF('dialogPessoa').show()"
-                                     update=":formDialog"/>
+                                     update=":formDialog" style="margin-right: 1rem"/>
                     <p:commandButton icon="pi pi-trash" title="Excluir"
                                      actionListener="#{pessoaBean.excluir(p)}"
                                      update="tabelaPessoas messages">
                         <p:confirm header="Confirmação" message="Tem a certeza que deseja excluir esta pessoa?" icon="pi pi-exclamation-triangle"/>
                     </p:commandButton>
                 </p:column>
+
+                <p:rowExpansion>
+                    <p:panelGrid columns="2" styleClass="expanded-details-grid" columnClasses="ui-g-4,ui-g-8">
+                        <h:outputText value="Endereço:" style="font-weight: bold;"/>
+                        <h:outputText value="#{p.endereco}" />
+
+                        <h:outputText value="CEP:" style="font-weight: bold;"/>
+                        <h:outputText value="#{p.cep}" />
+
+                        <h:outputText value="Cidade:" style="font-weight: bold;"/>
+                        <h:outputText value="#{p.cidade}" />
+
+                        <h:outputText value="País:" style="font-weight: bold;"/>
+                        <h:outputText value="#{p.pais}" />
+
+                        <h:outputText value="Data de Nascimento:" style="font-weight: bold;"/>
+                        <h:outputText value="#{p.dataNascimento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:panelGrid>
+                </p:rowExpansion>
             </p:dataTable>
         </p:panel>
     </h:form>
 
     <h:form id="formDialog">
-        <p:dialog header="Dados da Pessoa" widgetVar="dialogPessoa" modal="true" resizable="false" width="600">
-            <p:panelGrid id="dialogPessoaContent" columns="2" style="width:100%;" styleClass="ui-panelgrid-blank">
+        <p:dialog header="Dados da Pessoa" widgetVar="dialogPessoa" modal="true" resizable="false" width="650">
+            <p:tabView id="tabViewPessoa">
+                <p:tab title="Dados Principais">
+                    <p:panelGrid columns="2" style="width:100%; margin-top: 10px;" styleClass="ui-panelgrid-blank">
+                        <p:outputLabel for="nome" value="Nome Completo:"/>
+                        <p:inputText id="nome" value="#{pessoaBean.pessoaSelecionada.nome}" required="true" style="width: 95%"/>
 
-                <p:outputLabel for="nome" value="Nome Completo:"/>
-                <p:inputText id="nome" value="#{pessoaBean.pessoaSelecionada.nome}" required="true" style="width: 95%"/>
+                        <p:outputLabel for="email" value="E-mail:"/>
+                        <p:inputText id="email" value="#{pessoaBean.pessoaSelecionada.email}" required="true" style="width: 95%"/>
 
-                <p:outputLabel for="email" value="E-mail:"/>
-                <p:inputText id="email" value="#{pessoaBean.pessoaSelecionada.email}" required="true" style="width: 95%"/>
+                        <p:outputLabel for="cargo" value="Cargo:"/>
+                        <p:selectOneMenu id="cargo" value="#{pessoaBean.pessoaSelecionada.cargo}" converter="omnifaces.SelectItemsConverter" required="true">
+                            <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
+                            <f:selectItems value="#{pessoaBean.cargosDisponiveis}" var="cargo" itemLabel="#{cargo.nome}" itemValue="#{cargo}"/>
+                        </p:selectOneMenu>
 
-                <p:outputLabel for="cargo" value="Cargo:"/>
-                <p:selectOneMenu id="cargo" value="#{pessoaBean.pessoaSelecionada.cargo}" converter="omnifaces.SelectItemsConverter" required="true">
-                    <f:selectItem itemLabel="Selecione..." noSelectionOption="true"/>
-                    <f:selectItems value="#{pessoaBean.cargosDisponiveis}" var="cargo" itemLabel="#{cargo.nome}" itemValue="#{cargo}"/>
-                </p:selectOneMenu>
+                        <p:outputLabel for="telefone" value="Telefone:"/>
+                        <p:inputMask id="telefone" value="#{pessoaBean.pessoaSelecionada.telefone}" mask="(99) 99999-9999"/>
+                    </p:panelGrid>
+                </p:tab>
 
-                <p:outputLabel for="dataNascimento" value="Data de Nascimento:"/>
-                <p:calendar id="dataNascimento" value="#{pessoaBean.pessoaSelecionada.dataNascimento}" pattern="dd/MM/yyyy" mask="true"/>
+                <p:tab title="Dados Adicionais">
+                    <p:panelGrid columns="2" style="width:100%; margin-top: 10px;" styleClass="ui-panelgrid-blank">
+                        <p:outputLabel for="dataNascimento" value="Data de Nascimento:"/>
+                        <p:calendar id="dataNascimento" value="#{pessoaBean.pessoaSelecionada.dataNascimento}" pattern="dd/MM/yyyy" mask="true"/>
 
-                <p:outputLabel for="telefone" value="Telefone:"/>
-                <p:inputMask id="telefone" value="#{pessoaBean.pessoaSelecionada.telefone}" mask="(99) 99999-9999"/>
+                        <p:outputLabel for="cep" value="CEP:"/>
+                        <p:inputMask id="cep" value="#{pessoaBean.pessoaSelecionada.cep}" mask="99999-999"/>
 
-                <p:outputLabel for="cep" value="CEP:"/>
-                <p:inputMask id="cep" value="#{pessoaBean.pessoaSelecionada.cep}" mask="99999-999"/>
+                        <p:outputLabel for="endereco" value="Endereço:"/>
+                        <p:inputText id="endereco" value="#{pessoaBean.pessoaSelecionada.endereco}" style="width: 95%"/>
 
-                <p:outputLabel for="endereco" value="Endereço:"/>
-                <p:inputText id="endereco" value="#{pessoaBean.pessoaSelecionada.endereco}" style="width: 95%"/>
+                        <p:outputLabel for="cidade" value="Cidade:"/>
+                        <p:inputText id="cidade" value="#{pessoaBean.pessoaSelecionada.cidade}"/>
 
-                <p:outputLabel for="cidade" value="Cidade:"/>
-                <p:inputText id="cidade" value="#{pessoaBean.pessoaSelecionada.cidade}"/>
+                        <p:outputLabel for="pais" value="País:"/>
+                        <p:inputText id="pais" value="#{pessoaBean.pessoaSelecionada.pais}"/>
+                    </p:panelGrid>
+                </p:tab>
+            </p:tabView>
 
-                <p:outputLabel for="pais" value="País:"/>
-                <p:inputText id="pais" value="#{pessoaBean.pessoaSelecionada.pais}"/>
-
-            </p:panelGrid>
             <f:facet name="footer">
                 <p:commandButton value="Salvar" icon="pi pi-check"
                                  actionListener="#{pessoaBean.salvar}"
