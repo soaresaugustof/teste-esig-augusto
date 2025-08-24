@@ -20,6 +20,8 @@ public class UsuarioBean implements Serializable {
 
     private Usuario usuarioSelecionado;
     private List<Usuario> usuarios;
+
+    private String senhaPura;
     private String confirmarSenha;
 
     @PostConstruct
@@ -30,35 +32,45 @@ public class UsuarioBean implements Serializable {
 
     public void novoUsuario() {
         this.usuarioSelecionado = new Usuario();
+        this.senhaPura = null;
         this.confirmarSenha = null;
     }
 
     public void salvar() {
         try {
-            if (confirmarSenha != null && !confirmarSenha.isEmpty()) {
-                if (!confirmarSenha.equals(usuarioSelecionado.getSenha())) {
+            if (senhaPura != null && !senhaPura.isEmpty()) {
+                if (!senhaPura.equals(confirmarSenha)) {
                     FacesUtil.mensagemDeErro("Erro de Validação", "As senhas não coincidem.");
                     return;
                 }
+
+                usuarioSelecionado.setSenha(senhaPura);
+            } else if (usuarioSelecionado.getId() == null) {
+                FacesUtil.mensagemDeErro("Erro de Validação", "A senha é obrigatória para novos utilizadores.");
+                return;
             }
 
             if (usuarioSelecionado.getId() == null) {
-                if (confirmarSenha == null || confirmarSenha.isEmpty()) {
-                    FacesUtil.mensagemDeErro("Erro de Validação", "Confirme a senha.");
-                    return;
-                }
                 usuarioDAO.save(usuarioSelecionado);
-                FacesUtil.mensagemDeInfo("Sucesso", "Usuario criado com sucesso!");
+                FacesUtil.mensagemDeInfo("Sucesso", "Utilizador criado com sucesso.");
             } else {
-                usuarioDAO.update(usuarioSelecionado);
-                FacesUtil.mensagemDeInfo("Sucesso", "Usuario atualizado com sucesso!");
+                Usuario usuarioDoBanco = usuarioDAO.findById(usuarioSelecionado.getId());
+                usuarioDoBanco.setNome(usuarioSelecionado.getNome());
+                usuarioDoBanco.setLogin(usuarioSelecionado.getLogin());
+                usuarioDoBanco.setAdmin(usuarioSelecionado.isAdmin());
+                if (senhaPura != null && !senhaPura.isEmpty()) {
+                    usuarioDoBanco.setSenha(senhaPura);
+                }
+                usuarioDAO.update(usuarioDoBanco);
+                FacesUtil.mensagemDeInfo("Sucesso", "Utilizador atualizado com sucesso.");
             }
 
             this.usuarios = usuarioDAO.findAll();
             novoUsuario();
+
         } catch (Exception e) {
             e.printStackTrace();
-            FacesUtil.mensagemDeErro("Erro", "Ocorreu um problema ao salvar o usuário.");
+            FacesUtil.mensagemDeErro("Erro", "Ocorreu um problema ao salvar o utilizador.");
         }
     }
 
@@ -69,7 +81,7 @@ public class UsuarioBean implements Serializable {
             FacesUtil.mensagemDeInfo("Sucesso", "Utilizador excluído com sucesso.");
         } catch (Exception e) {
             e.printStackTrace();
-            FacesUtil.mensagemDeInfo("Erro", "Ocorreu um problema ao excluir o utilizador.");
+            FacesUtil.mensagemDeErro("Erro", "Ocorreu um problema ao excluir o utilizador.");
         }
     }
 
@@ -79,12 +91,20 @@ public class UsuarioBean implements Serializable {
 
     public void setUsuarioSelecionado(Usuario usuarioSelecionado) {
         this.usuarioSelecionado = usuarioSelecionado;
-        // Limpa a senha ao selecionar um utilizador para edição, por segurança
+        this.senhaPura = null;
         this.confirmarSenha = null;
     }
 
     public List<Usuario> getUsuarios() {
         return usuarios;
+    }
+
+    public String getSenhaPura() {
+        return senhaPura;
+    }
+
+    public void setSenhaPura(String senhaPura) {
+        this.senhaPura = senhaPura;
     }
 
     public String getConfirmarSenha() {

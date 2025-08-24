@@ -38,28 +38,40 @@ public class PessoaBean implements Serializable {
         this.pessoaSelecionada = new Pessoa();
     }
 
-    /**
-     * Método para salvar pessoa no banco de dados (criação ou atualização)
-     */
     public void salvar() {
         try {
+            Pessoa pessoaExistente = pessoaDAO.buscarPorEmail(pessoaSelecionada.getEmail().trim());
+
+            if (pessoaSelecionada.getId() == null) {
+                if (pessoaExistente != null) {
+                    FacesUtil.mensagemDeErro("Erro de Validação", "O e-mail '" + pessoaSelecionada.getEmail() + "' já está em uso.");
+                    return;
+                }
+            }
+
+            else {
+                if (pessoaExistente != null && !pessoaExistente.getId().equals(pessoaSelecionada.getId())) {
+                    FacesUtil.mensagemDeErro("Erro de Validação", "O e-mail '" + pessoaSelecionada.getEmail() + "' já pertence a outra pessoa.");
+                    return;
+                }
+            }
+
             if (pessoaSelecionada.getId() == null) {
                 pessoaDAO.save(pessoaSelecionada);
-                FacesUtil.mensagemDeInfo("Sucesso!", "Pessoa criada com sucesso!.");
+                FacesUtil.mensagemDeInfo("Sucesso!", "Pessoa criada com sucesso.");
             } else {
                 pessoaDAO.update(pessoaSelecionada);
-                FacesUtil.mensagemDeInfo("Sucesso!", "Pessoa atualizada com sucesso!.");
+                FacesUtil.mensagemDeInfo("Sucesso!", "Pessoa atualizada com sucesso.");
             }
+
+            this.pessoas = pessoaDAO.findAll();
+            novaPessoa();
         } catch (Exception e) {
             e.printStackTrace();
             FacesUtil.mensagemDeErro("Erro!", "Ocorreu um problema ao salvar a pessoa.");
         }
     }
 
-    /**
-     * Método para excluir uma pessoa do banco de dados
-     * @param pessoa
-     */
     public void excluir(Pessoa pessoa) {
         try {
             pessoaDAO.delete(pessoa.getId());

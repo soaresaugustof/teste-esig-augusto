@@ -3,21 +3,17 @@ package teste.augusto.dao;
 import teste.augusto.model.PessoaSalarioConsolidado;
 import teste.augusto.utils.JPAUtil;
 
-import javax.faces.bean.ApplicationScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
 @ApplicationScoped
-public class PessoaSalarioConsolidadoDAO extends DAO<PessoaSalarioConsolidado> {
+public class PessoaSalarioConsolidadoDAO extends DAO<PessoaSalarioConsolidado> implements Serializable {
 
-    /**
-     * Método para realizar a busca de todos os registros
-     * da tabela PessoaSalarioConsolidado, ordenado por nome.
-     * @return
-     */
     public List<PessoaSalarioConsolidado> buscarTodos() {
         EntityManager em = JPAUtil.getEntityManager(); // Obtém seu próprio EM
         try {
@@ -28,11 +24,6 @@ public class PessoaSalarioConsolidadoDAO extends DAO<PessoaSalarioConsolidado> {
         }
     }
 
-    /**
-     * Método que faz a exclusão dos registros da
-     * tabela PessoaSalarioConsolidado para fazer a adição dos novos registros.
-     * @param lista
-     */
     public void limparEInserirTodos(List<PessoaSalarioConsolidado> lista) {
         EntityManager em = JPAUtil.getEntityManager(); // Obtém seu próprio EM
         try {

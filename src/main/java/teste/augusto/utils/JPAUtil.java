@@ -5,7 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public class JPAUtil {
-    private static final String PERSISTENCE_UNIT_NAME = "teste-tecnico-esig-augusto";
+    private static final String PERSISTENCE_UNIT_NAME = "teste_esig_augusto";
 
     private static EntityManagerFactory factory;
     static {

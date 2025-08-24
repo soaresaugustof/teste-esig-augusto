@@ -2,5 +2,9 @@ package teste.augusto.dao;
 
 import teste.augusto.model.Vencimento;
 
-public class VencimentoDAO extends DAO<Vencimento> {
+import javax.enterprise.context.ApplicationScoped;
+import java.io.Serializable;
+
+@ApplicationScoped
+public class VencimentoDAO extends DAO<Vencimento> implements Serializable {
 }

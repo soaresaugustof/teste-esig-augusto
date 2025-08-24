@@ -19,6 +19,7 @@ public class LoginBean implements Serializable {
 
     private String login;
     private String senha;
+    private String confirmarSenha;
     private Usuario usuarioLogado;
 
     public String efetuarLogin() {
@@ -32,6 +33,34 @@ public class LoginBean implements Serializable {
             FacesUtil.mensagemDeErro("Erro de Login", "Usuário ou senha inválidos.");
             this.login = null;
             this.senha = null;
+            return null;
+        }
+    }
+
+    public String registrar() {
+        if (senha == null || senha.isEmpty() || !senha.equals(confirmarSenha)) {
+            FacesUtil.mensagemDeErro("Erro de Validação", "As senhas não coincidem ou são inválidas.");
+            return null;
+        }
+
+        if (usuarioDAO.buscarPorLogin(login) != null) {
+            FacesUtil.mensagemDeErro("Erro de Registro", "O login '" + login + "' já existe.");
+            return null;
+        }
+
+        try {
+            Usuario novoUsuario = new Usuario();
+            novoUsuario.setLogin(login);
+            novoUsuario.setSenha(senha);
+            novoUsuario.setNome("Novo Usuário");
+            novoUsuario.setAdmin(false);
+
+            usuarioDAO.save(novoUsuario);
+            FacesUtil.mensagemDeInfo("Registro Concluído!", "A sua conta foi criada. Efetue o login.");
+            return "/login.xhtml?faces-redirect=true";
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesUtil.mensagemDeErro("Erro", "Não foi possível criar o usuário.");
             return null;
         }
     }
@@ -59,6 +88,14 @@ public class LoginBean implements Serializable {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getConfirmarSenha() {
+        return confirmarSenha;
+    }
+
+    public void setConfirmarSenha(String confirmarSenha) {
+        this.confirmarSenha = confirmarSenha;
     }
 
     public Usuario getUsuarioLogado() {

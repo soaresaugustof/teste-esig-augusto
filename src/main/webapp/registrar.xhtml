@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Registrar-se</title>
+</h:head>
+
+<h:body>
+    <div class="login-panel">
+        <p:growl id="messages" showDetail="true"/>
+
+        <h:form>
+            <p:panel header="Registo de Utilizador">
+                <p:panelGrid columns="1" styleClass="ui-noborder" style="width:100%;">
+
+                    <p:outputLabel for="login" value="Login"/>
+                    <p:inputText id="login" value="#{loginBean.login}" required="true" style="width:100%;"/>
+
+                    <p:outputLabel for="senha" value="Senha"/>
+                    <p:password id="senha" value="#{loginBean.senha}" required="true" feedback="true" style="width:100%;"/>
+
+                    <p:outputLabel for="confirmarSenha" value="Confirmar Senha"/>
+                    <p:password id="confirmarSenha" value="#{loginBean.confirmarSenha}" required="true" style="width:100%;"/>
+
+                    <p:commandButton value="Registar" action="#{loginBean.registrar}"
+                                     process="@form"
+                                     update="@form messages"
+                                     style="width:100%; margin-top: 10px;"/>
+
+                    <p:commandLink value="Já tem uma conta?" action="login.xhtml?faces-redirect=true" style="text-align: center;"/>
+
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </div>
+</h:body>
+</html>

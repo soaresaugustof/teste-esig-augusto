@@ -34,6 +34,7 @@ public class AuthenticationFilter implements Filter {
 
     private boolean isPaginaPublica(String requestURI) {
         return requestURI.endsWith("/login.xhtml") ||
+                requestURI.endsWith("/registrar.xhtml") ||
                 requestURI.contains("/javax.faces.resource/");
     }
 

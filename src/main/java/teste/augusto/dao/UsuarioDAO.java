@@ -7,9 +7,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.io.Serializable;
 
 @ApplicationScoped
-public class UsuarioDAO extends DAO<Usuario> {
+public class UsuarioDAO extends DAO<Usuario> implements Serializable {
 
     public Usuario buscarPorLogin(String login) {
         EntityManager em = JPAUtil.getEntityManager();
@@ -19,7 +20,6 @@ public class UsuarioDAO extends DAO<Usuario> {
             query.setParameter("login", login);
             return query.getSingleResult();
         } catch (NoResultException e) {
-            // Isso é esperado se o utilizador não existir, não é um erro.
             return null;
         } finally {
             em.close();

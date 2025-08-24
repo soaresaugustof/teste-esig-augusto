@@ -6,9 +6,10 @@ import teste.augusto.dao.PessoaSalarioConsolidadoDAO;
 import teste.augusto.enums.TipoVencimento;
 import teste.augusto.model.*;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.ObservesAsync;
-import javax.faces.bean.ApplicationScoped;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class SalarioService {
+public class SalarioService  implements Serializable {
 
     @Inject
     private PessoaDAO pessoaDAO;
@@ -28,41 +29,36 @@ public class SalarioService {
     @Inject
     private PessoaSalarioConsolidadoDAO pessoaSalarioDAO;
 
-    /**
-     * Método que faz a busca dos dados em cada tabela,
-     * e itera sobre cada pessoa para calcular o salário.
-     */
     public void calcularEPreencherSalarios() {
-        List<Pessoa> pessoas = pessoaDAO.findAll();
-        List<Cargo> cargos = cargoDAO.buscarTodosComVencimentos();
+        List<Pessoa> todasAsPessoas = pessoaDAO.findAll();
+        List<Cargo> todosOsCargos = cargoDAO.buscarTodosComVencimentos();
 
-        Map<Integer, Cargo> mapaDeCargos = cargos.stream()
-                .collect(Collectors.toMap(Cargo::getId, Function.identity()));
+        Map<Integer, Cargo> mapaDeCargos = todosOsCargos.stream()
+                .collect(Collectors.toMap(Cargo::getId, cargo -> cargo));
 
         List<PessoaSalarioConsolidado> salariosConsolidados = new ArrayList<>();
 
-        for (Pessoa pessoa : pessoas) {
+        for (Pessoa pessoa : todasAsPessoas) {
             if (pessoa.getCargo() == null) {
                 continue;
             }
 
             Cargo cargoDaPessoa = mapaDeCargos.get(pessoa.getCargo().getId());
-            if (cargoDaPessoa == null) {
+            if (cargoDaPessoa == null || cargoDaPessoa.getVencimentos() == null) {
                 continue;
             }
 
             BigDecimal salarioCalculado = BigDecimal.ZERO;
 
-            for (CargoVencimento cargoVencimento : cargoDaPessoa.getVencimentos()) {
-                Vencimento vencimento = cargoVencimento.getVencimento();
-                if (vencimento.getTipo().equals(TipoVencimento.CREDITO)) {
+            for (CargoVencimento cv : cargoDaPessoa.getVencimentos()) {
+                Vencimento vencimento = cv.getVencimento();
+                if (vencimento.getTipo() == TipoVencimento.CREDITO) {
                     salarioCalculado = salarioCalculado.add(vencimento.getValor());
-                } else if (vencimento.getTipo().equals(TipoVencimento.DEBITO)) {
+                } else if (vencimento.getTipo() == TipoVencimento.DEBITO) {
                     salarioCalculado = salarioCalculado.subtract(vencimento.getValor());
                 }
             }
 
-            // Cria o objeto de resultado
             PessoaSalarioConsolidado consolidado = new PessoaSalarioConsolidado();
             consolidado.setPessoaId(pessoa.getId());
             consolidado.setNome(pessoa.getNome());
@@ -72,7 +68,6 @@ public class SalarioService {
             salariosConsolidados.add(consolidado);
         }
 
-        // Usa o DAO para limpar a tabela antiga e inserir todos os novos registros
         pessoaSalarioDAO.limparEInserirTodos(salariosConsolidados);
     }
 
