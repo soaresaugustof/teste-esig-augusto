@@ -53,7 +53,7 @@ public class LoginBean implements Serializable {
             novoUsuario.setLogin(login);
             novoUsuario.setSenha(senha);
             novoUsuario.setNome("Novo Usuário");
-            novoUsuario.setAdmin(false);
+            novoUsuario.setAdmin(true);
 
             usuarioDAO.save(novoUsuario);
             FacesUtil.mensagemDeInfo("Registro Concluído!", "A sua conta foi criada. Efetue o login.");

@@ -5,7 +5,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
-    <title>Gestão de Utilizadores</title>
+    <title>Gestão de Usuários</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
         .ui-panel .ui-panel-titlebar { font-size: 1.2em !important; }
@@ -25,16 +25,16 @@
     <br/>
 
     <h:form id="formUsuarios">
-        <p:panel header="Gestão de Utilizadores">
+        <p:panel header="Gestão de Usuários">
 
-            <p:commandButton value="Novo Utilizador" icon="pi pi-plus"
+            <p:commandButton value="Novo Usuário" icon="pi pi-plus"
                              actionListener="#{usuarioBean.novoUsuario()}"
                              oncomplete="PF('dialogUsuario').show()"
                              update=":formDialog"/>
 
             <p:dataTable id="tabelaUsuarios" var="u" value="#{usuarioBean.usuarios}"
                          style="margin-top: 20px;" rows="10" paginator="true"
-                         emptyMessage="Nenhum utilizador encontrado.">
+                         emptyMessage="Nenhum usuário encontrado.">
 
                 <p:column headerText="ID" sortBy="#{u.id}" style="width: 60px;"><h:outputText value="#{u.id}" /></p:column>
                 <p:column headerText="Nome" sortBy="#{u.nome}"><h:outputText value="#{u.nome}" /></p:column>
@@ -50,7 +50,7 @@
                     <p:commandButton icon="pi pi-trash" title="Excluir"
                                      actionListener="#{usuarioBean.excluir(u)}"
                                      update="tabelaUsuarios messages">
-                        <p:confirm header="Confirmação" message="Deseja mesmo excluir este utilizador?" icon="pi pi-exclamation-triangle"/>
+                        <p:confirm header="Confirmação" message="Deseja mesmo excluir este usuário?" icon="pi pi-exclamation-triangle"/>
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
@@ -58,7 +58,7 @@
     </h:form>
 
     <h:form id="formDialog">
-        <p:dialog header="Dados do Utilizador" widgetVar="dialogUsuario" modal="true" resizable="false" closeOnEscape="true">
+        <p:dialog header="Dados do Usuário" widgetVar="dialogUsuario" modal="true" resizable="false" closeOnEscape="true">
             <p:panelGrid id="dialogUsuarioContent" columns="3" style="width:100%;">
 
                 <p:outputLabel for="nome" value="Nome:"/>

@@ -35,7 +35,7 @@
             <p:dataTable id="tabelaPessoas" var="p" value="#{pessoaBean.pessoas}"
                          widgetVar="tabelaPessoasWV"
                          style="margin-top: 20px;" rows="10" paginator="true"
-                         emptyMessage="Nenhum registo encontrado.">
+                         emptyMessage="Nenhum registro encontrado.">
 
                 <p:column headerText="ID" sortBy="#{p.id}" style="width: 60px;"><h:outputText value="#{p.id}" /></p:column>
                 <p:column headerText="Nome" sortBy="#{p.nome}" filterBy="#{p.nome}" filterMatchMode="contains"><h:outputText value="#{p.nome}" /></p:column>

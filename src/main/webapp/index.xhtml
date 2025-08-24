@@ -5,7 +5,7 @@
       xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-    <title>Desafio Java - Listagem de Salários</title>
+    <title>Teste Técnico ESIG - Listagem de Salários</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
         .ui-panel .ui-panel-titlebar { font-size: 1.2em !important; }
@@ -18,14 +18,14 @@
 
     <h:form id="formPrincipal">
         <p:panel header="Ações do Sistema">
-            <p:commandButton value="Calcular Salários (Assíncrono)"
+            <p:commandButton value="Calcular Salários"
                              actionListener="#{pessoaSalarioBean.calcularSalarios}"
                              update="messages"
                              icon="pi pi-bolt" />
 
-            <p:button value="Gerir Pessoas" outcome="pessoas" icon="pi pi-users" style="margin-left: 10px;"/>
+            <p:button value="Pessoas" outcome="pessoas" icon="pi pi-users" style="margin-left: 10px;"/>
 
-            <p:button value="Gerir Utilizadores" outcome="usuarios" icon="pi pi-key" style="margin-left: 10px;"/>
+            <p:button value="Usuários" outcome="usuarios" icon="pi pi-key" style="margin-left: 10px;"/>
 
             <p:commandButton value="Exportar para PDF" icon="pi pi-file-pdf"
                              actionListener="#{pessoaSalarioBean.gerarRelatorio}"
@@ -47,7 +47,7 @@
                          paginator="true"
                          rows="15"
                          rowsPerPageTemplate="15,30,50"
-                         emptyMessage="Nenhum registo encontrado. Clique no botão 'Calcular' para popular os dados."
+                         emptyMessage="Nenhum registro encontrado. Clique no botão 'Calcular' para popular os dados."
                          paginatorPosition="bottom">
 
                 <p:column headerText="ID" sortBy="#{pessoa.pessoaId}" style="width: 80px; text-align: center;">

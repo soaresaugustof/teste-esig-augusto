@@ -12,7 +12,7 @@
         <p:growl id="messages" showDetail="true"/>
 
         <h:form>
-            <p:panel header="Registo de Utilizador">
+            <p:panel header="Registro de Usuário">
                 <p:panelGrid columns="1" styleClass="ui-noborder" style="width:100%;">
 
                     <p:outputLabel for="login" value="Login"/>
@@ -24,7 +24,7 @@
                     <p:outputLabel for="confirmarSenha" value="Confirmar Senha"/>
                     <p:password id="confirmarSenha" value="#{loginBean.confirmarSenha}" required="true" style="width:100%;"/>
 
-                    <p:commandButton value="Registar" action="#{loginBean.registrar}"
+                    <p:commandButton value="Registrar" action="#{loginBean.registrar}"
                                      process="@form"
                                      update="@form messages"
                                      style="width:100%; margin-top: 10px;"/>
